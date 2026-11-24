@@ -1,6 +1,7 @@
 package database
 
 import (
+	"MiniBlog/config"
 	"context"
 	"fmt"
 
@@ -10,16 +11,18 @@ import (
 var RDB *redis.Client
 
 func InitRedis() {
+
 	RDB = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379", // Redis 地址
-		Password: "",               // 没有密码就留空
-		DB:       0,                // 默认库
+		Addr:     config.Env("MINIBLOG_REDIS_ADDR", "127.0.0.1:6379"),
+		Password: "",
+		DB:       0,
 	})
 
-	// 测试连接
 	ctx := context.Background()
+
 	pong, err := RDB.Ping(ctx).Result()
 	if err != nil {
+		//Fail-fast 快速失败 原则
 		panic("Redis 连接失败: " + err.Error())
 	}
 	fmt.Println("Redis 连接成功！Ping结果:", pong)

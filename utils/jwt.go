@@ -1,12 +1,11 @@
 package utils
 
 import (
+	"MiniBlog/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
-var jwtkey = []byte("your-secret-key-change-in-production")
 
 type Claims struct {
 	UserID uint `json:"user_id"`
@@ -14,7 +13,7 @@ type Claims struct {
 }
 
 func JwtKey() []byte {
-	return jwtkey
+	return []byte(config.Env("MINIBLOG_JWT_SECRET", "local-development-secret-change-me"))
 }
 
 func GenerateToken(userID uint) (string, error) {
@@ -26,5 +25,5 @@ func GenerateToken(userID uint) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtkey)
+	return token.SignedString(JwtKey())
 }

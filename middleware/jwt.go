@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"MiniBlog/utils"
-	"log"
 	"net/http"
 	"strings"
 
@@ -30,14 +29,12 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		claims := &utils.Claims{}
 		tokenString := strings.TrimSpace(parts[1])
-		log.Printf("后端收到的纯净 Token: %q", tokenString)
-		token, err := jwt.ParseWithClaims(parts[1], claims,
+		token, err := jwt.ParseWithClaims(tokenString, claims,
 			func(t *jwt.Token) (interface{}, error) { return utils.JwtKey(), nil },
 			jwt.WithValidMethods([]string{"HS256"}),
 		)
 
 		if err != nil || !token.Valid {
-			log.Println("真正的JWT解析报错:", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "无效或过期的token"})
 			c.Abort()
 			return

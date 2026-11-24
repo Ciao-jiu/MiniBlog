@@ -34,7 +34,7 @@ func SetupRouter() *gin.Engine {
 	//handlers.CreatedArticle
 	{
 		auth.PUT("/articles/:id", handlers.UpdateArticle)
-		auth.DELETE("/articles/:id", handlers.DeletArticle)
+		auth.DELETE("/articles/:id", handlers.DeleteArticle)
 		auth.POST("/articles", handlers.CreatedArticle)
 	}
 	return r

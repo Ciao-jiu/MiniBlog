@@ -16,3 +16,4 @@ web/*.local
 !.vscode/extensions.json
 .DS_Store
 Thumbs.db
+.gocache/
