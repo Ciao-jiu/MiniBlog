@@ -167,7 +167,7 @@ func UpdateArticle(c *gin.Context) {
 
 	var input UpdateArticleInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "请求参数错误"})
 		return
 	}
 	var article models.Article
@@ -177,6 +177,7 @@ func UpdateArticle(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "文章不存在"})
 			return
 		}
+		log.Printf("更新前查询文章失败，id=%d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "查询失败"})
 		return
 	}
@@ -197,6 +198,7 @@ func UpdateArticle(c *gin.Context) {
 	article.Title = input.Title
 	article.Content = input.Content
 	if err := database.DB.Save(&article).Error; err != nil {
+		log.Printf("更新文章失败，id=%d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "更新失败"})
 		return
 	}
