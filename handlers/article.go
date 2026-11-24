@@ -77,9 +77,6 @@ func GetArticles(c *gin.Context) {
 		"total":     total,
 	}
 
-	// 5. 将查询结果存入 Redis（设置 5 分钟过期）
-	//设置5分钟的原因是1防止Redis内存被撑爆，2是作为一种兜底，数据库更新了但是缓存没删干净，5分钟后也会自动刷新
-	// 把 response 变成 JSON 字符串
 	jsonData, err := json.Marshal(response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "响应序列化失败"})
@@ -101,9 +98,7 @@ func CreatedArticle(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	//从Gin上下文取中间件存入的 userID
-	//c.Get()方法不知道是什么类型，所以使用c.Set()存的都是interface{}，取出来的也都是interface{}
-	//interface{}是万能容器，可以装任何类型
+	// 从上下文获取 JWT 中间件注入的 userID（防前端伪造）
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "未认证"})
